@@ -109,6 +109,7 @@ a symbol that references the defined entity.
             [clojure.string :as str]
             [erp12.fijit.collection :as sc]
             [erp12.fijit.option :as opt]
+            [erp12.fijit.version :as sm]
             [erp12.fijit.core :refer [unit]])
   (:import (scala.reflect.api JavaUniverse TypeTags$TypeTag Mirrors$ClassMirror Mirrors$InstanceMirror Types$TypeApi Names$NameApi Symbols$SymbolApi Mirrors$MethodMirror Mirrors$FieldMirror Printers$BooleanFlag)
            (scala.reflect.runtime JavaMirrors$JavaMirror)
@@ -791,7 +792,8 @@ This is used as a placeholder in the `self` parameter Template if there is no de
 
 (defn named-arg
   [^Trees$Tree lhs ^Trees$Tree rhs]
-  (-> universe .NamedArg (.apply lhs rhs)))
+  (sm/by-scala-version :2.12 (-> universe .AssignOrNamedArg (.apply lhs rhs))
+                       :2.13 (-> universe .NamedArg (.apply lhs rhs))))
 
 (defn if
   ^Trees$If [^Trees$Tree cond ^Trees$Tree thenp ^Trees$Tree elsep]
